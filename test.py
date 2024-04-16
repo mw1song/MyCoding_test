@@ -6,8 +6,6 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from bs4 import BeautifulSoup
 
-
-
 def News_sum():
     # Wait until the news articles are loaded
     wait = WebDriverWait(driver, 10)

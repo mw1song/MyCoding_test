@@ -1,27 +1,73 @@
+# Import libraries
 from selenium import webdriver
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 from bs4 import BeautifulSoup
 
-# 크롬 드라이버 경로 설정
-chrome_driver_path = "크롬 드라이버의 경로를 여기에 입력하세요"
 
-# 크롬 브라우저 열기
+
+def News_sum():
+    # Wait until the news articles are loaded
+    wait = WebDriverWait(driver, 10)
+    wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, '.SoAPf')))
+
+    # Get the HTML of the page
+    html = driver.page_source
+    # Parse HTML with BeautifulSoup
+    soup = BeautifulSoup(html, 'html.parser')
+
+    # Select all news articles
+    articles = soup.select('.WlydOe')
+
+    # Print the title, date, and source of each article
+    for article in articles:
+        title = article.select_one('.n0jPhd.ynAwRc.MBeuO.nDgy9d').text.strip()
+        date = article.select_one('.OSrXXb.rbYSKb.LfVVr').text.strip()
+        source = article.select_one('.MgUUmf.NUnG9d').text.strip()
+        summary = article.select_one('.GI74Re.nDgy9d').text.strip()
+        
+        print("   - ",f"{title} ({date}, {source})")
+        print("       · ",f"{summary}")
+
+
+# Set up Selenium web driver
 driver = webdriver.Chrome()
+driver.get("https://www.google.com")
 
-# 웹페이지 열기
-url = "https://www.google.com/search?newwindow=1&sca_esv=59018620b3723b92&sxsrf=ACQVn0_7Ysv8UK1lb1uB99jDlyguWMgcNg:1712990014188&q=aws+telco+RAN&tbm=nws&source=lnms&prmd=isnvbmz&sa=X&ved=2ahUKEwi_rLKKyb6FAxX9i68BHUO0BmgQ0pQJegQIChAB"
-driver.get(url)
+# Search for "AWS AND Telco"
+search_box = driver.find_element(By.NAME, "q")
+search_box.send_keys("AWS AND Telco")
+search_box.send_keys(Keys.RETURN)
+
+# Click on the "News" tab
+news_tab = driver.find_element('xpath', '//*[@id="hdtb-sc"]/div/div/div[1]/div[3]/a/div')
+news_tab.click()
+
+# go to Next page
+# Click on the page 2
+news_init_page=2
+news_last_page=5
+
+# xpath_list = []
+
+for i in range(news_init_page+1, news_last_page+1):
+    xpath = '//*[@id="botstuff"]/div/div[3]/table/tbody/tr/td[{}]/a'.format(i)
+    # xpath_list.append(xpath)
+    news_tab = driver.find_element('xpath', xpath)
+    news_tab.click()
+    News_sum () 
 
 
-# 페이지 소스 가져오기
-page_source = driver.page_source
 
-# BeautifulSoup을 사용하여 HTML 파싱
-soup = BeautifulSoup(page_source, 'html.parser')
 
-# 클래스를 사용하여 링크 가져오기
-links = soup.find_all(class_='WlydOe')
 
-# 각 링크의 href 속성을 출력
-for link in links:
-    href = link.get('href')
-    print(href)
+# Keep the window floating until it is closed
+while True:
+    user_input = input("Press 'q' to quit: ")
+    if user_input.lower() == 'q':
+        break
+
+# Exit web page
+driver.quit()

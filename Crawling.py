@@ -17,18 +17,18 @@ wait = WebDriverWait(driver, 10)
 driver.get("https://finance.yahoo.com")
 driver.implicitly_wait(30)
 
-wait.until(EC.presence_of_element_located((By.XPATH, '//*[@id="yfin-usr-qry"]')))  # wait
-elem = driver.find_element("xpath", "//*[@id='yfin-usr-qry']")  
+wait.until(EC.presence_of_element_located((By.XPATH, '//*[@id="ybar-sbq"]')))  # wait
+elem = driver.find_element("xpath", '//*[@id="ybar-sbq"]')  
 elem.send_keys("AMZN")   # input company_ticker
 elem.send_keys(Keys.RETURN)  # Enter 
 # driver.implicitly_wait(30)   # wait
 
 # find company name text
-element = driver.find_element("xpath", '//*[@id="quote-header-info"]/div[2]/div[1]/div[1]/h1')
+element = driver.find_element("xpath", '//*[@id="nimbus-app"]/section/section/section/article/section[1]/div[1]/div/section/h1')
 company_name = element.text
 
 #Market_cap
-element = driver.find_element("xpath", '//*[@id="quote-summary"]/div[2]/table/tbody/tr[1]/td[2]')  
+element = driver.find_element("xpath", '//*[@id="nimbus-app"]/section/section/section/article/div[2]/ul/li[9]/span[2]/fin-streamer')  
 Market_cap = element.text
 
 # find HQ_Homepage
@@ -125,7 +125,12 @@ Key_holders_2 = selected_line_text
 ######################## print all info ########################
 ################################################################
 print("\n")
-print("□ 회사명 : " + company_name,"('"+Foundation_year[2:4]+"年 설립)\n")
+# print("□ 회사명 : " + company_name,"('"+Foundation_year[2:4]+"年 설립)\n")
+
+try:
+    print("□ 회사명 : " + company_name,"('"+Foundation_year[2:4]+"年 설립)\n")
+except TypeError:
+    print("설립년도를 찾을 수 없습니다.")
 
 # HQ 위치만 발췌 
 import re
@@ -149,7 +154,6 @@ print("□ 시가총액 : " + Market_cap + "$", "\n")  #수정필요
 print("□ 경영현황 : 매출",Revenue +"K$ / ","손익", Net_income+"K$", "\n")
 print("□ 주요주주 \n\n", Key_holders_1, "\n\n",Key_holders_2, "\n")
 print("□ 회사개요 \n " + Company_description_eng, "\n") 
-# print("□ 회사개요 \n " + Company_description_korean_text, "\n")  
 # print("□ 주요사업분야 : " + Biz_area)
 
 print("□ 사업현황")   # 년도별 매출 손익 출력

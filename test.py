@@ -6,10 +6,8 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from bs4 import BeautifulSoup
 
-
-
 def News_sum():
-# Wait until the news articles are loaded
+    # Wait until the news articles are loaded
     wait = WebDriverWait(driver, 10)
     wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, '.SoAPf')))
 
@@ -27,12 +25,11 @@ def News_sum():
         date = article.select_one('.OSrXXb.rbYSKb.LfVVr').text.strip()
         source = article.select_one('.MgUUmf.NUnG9d').text.strip()
         summary = article.select_one('.GI74Re.nDgy9d').text.strip()
-        
+        href = article.get('href')
+            
         print("   - ",f"{title} ({date}, {source})")
         print("       · ",f"{summary}")
-
-
-
+        print(href)
 
 # Set up Selenium web driver
 driver = webdriver.Chrome()
@@ -47,23 +44,20 @@ search_box.send_keys(Keys.RETURN)
 news_tab = driver.find_element('xpath', '//*[@id="hdtb-sc"]/div/div/div[1]/div[3]/a/div')
 news_tab.click()
 
-
-
 # go to Next page
 # Click on the page 2
-init_page=2
-end_page=5
+news_init_page=2
+news_last_page=5
 
-xpath_list = []
+# xpath_list = []
 
-for i in range(init_page+1, end_page+1):
+for i in range(news_init_page+1, news_last_page+1):
     xpath = '//*[@id="botstuff"]/div/div[3]/table/tbody/tr/td[{}]/a'.format(i)
-    xpath_list.append(xpath)
+    # xpath_list.append(xpath)
     news_tab = driver.find_element('xpath', xpath)
     news_tab.click()
+    # driver.get(current_page_url)
     News_sum () 
-
-
 
 
 
